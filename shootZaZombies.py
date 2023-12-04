@@ -43,6 +43,11 @@ class Bullet(simpleGE.SuperSprite):
         self.setPosition(self.parent.rect.center)
         self.setMoveAngle(self.parent.rotation)
         self.setSpeed(20)
+        
+    def checkEvents(self):
+        if self.collidesWith(self.scene.andyZombie):
+            self.hide()
+            self.setSpeed(0)
 
 class Player(simpleGE.SuperSprite):
     def __init__(self, scene):
@@ -94,7 +99,7 @@ class Zombie(simpleGE.SuperSprite):
         dirToPlayer = self.dirTo(self.scene.player.rect.center)
         self.setAngle(dirToPlayer)
         self.setSpeed(2)
-        pass
+        
 
     def reset(self):
         side = random.randint(0,3)
