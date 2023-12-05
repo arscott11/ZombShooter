@@ -44,10 +44,7 @@ class Bullet(simpleGE.SuperSprite):
         self.setMoveAngle(self.parent.rotation)
         self.setSpeed(20)
         
-    def checkEvents(self):
-        if self.collidesWith(self.scene.andyZombie):
-            self.hide()
-            self.setSpeed(0)
+    
 
 class Player(simpleGE.SuperSprite):
     def __init__(self, scene):
@@ -75,6 +72,10 @@ class Player(simpleGE.SuperSprite):
         pos = pygame.mouse.get_pos()
         direction_to_mouse = self.dirTo(pos)
         self.setAngle(direction_to_mouse)
+        
+    def collide(self,zombie,zombies):
+        if self.collidesWith(zombie.rect):
+            self.reset
 
     def reset(self):
         self.x = 325
@@ -99,6 +100,10 @@ class Zombie(simpleGE.SuperSprite):
         dirToPlayer = self.dirTo(self.scene.player.rect.center)
         self.setAngle(dirToPlayer)
         self.setSpeed(2)
+        
+        #if self.collidesWith(self.scene.bullets):
+            #self.reset()
+            
         
 
     def reset(self):
@@ -130,15 +135,20 @@ class Game(simpleGE.Scene):
         self.waves_label = LblWaves(self)
         self.NUM_BULLETS = 100
         self.currentBullet = 0
-        self.andyZombie = Zombie(self)
         self.zombie = 0
+        
         self.zombies = []
+        for i in range(1):
+            self.zombies.append(Zombie(self))
+            
         self.bullets = []
         for i in range(self.NUM_BULLETS):
             self.bullets.append(Bullet(self, self.player))
+            
+        self.bullets_group = pygame.sprite.Group(self.bullets)
 
         self.sprites = [self.player, self.startScreen, self.bullets, 
-                        self.waves_label, self.zombies, self.andyZombie]
+                        self.waves_label, self.zombies]
 
     def spawnWave(self):
         if self.waves_label.waves == 1:
@@ -149,8 +159,12 @@ class Game(simpleGE.Scene):
             
             for zombie in self.zombies:
                 zombie.reset()
-               
-
+                
+    def checkEvents(self, event):
+        for zombie in self.zombies:
+            if zombie.collidesGroup(self.bullets):
+                zombie.hide()
+                
     def doEvents(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
             self.currentBullet += 1
@@ -172,6 +186,11 @@ class Game(simpleGE.Scene):
             self.waves_label.waves += 1
             self.waves_label.text = f"WAVE: {self.waves_label.waves}"
             self.spawnWave()
+            
+        for bullet in self.bullets:
+            bulletHitZomb = bullet.collidesGroup(self.zombies)
+            if bulletHitZomb:
+                bulletHitZomb.reset()
 
         super().update()
 
