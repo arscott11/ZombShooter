@@ -11,6 +11,7 @@
 #zombie https://opengameart.org/content/animated-top-down-zombie
 #player https://opengameart.org/content/animated-top-down-survivor-player
 #background https://opengameart.org/content/2d-top-down-highway-background
+#splat https://opengameart.org/content/8-wet-squish-slurp-impacts
 
 import pygame, simpleGE, random, sys
 
@@ -18,6 +19,10 @@ pygame.init()
 
 pygame.mixer.init()
 
+def splat():
+    sound = pygame.mixer.Sound("impactsplat01.mp3.flac")
+    sound.play()
+    
 def play_gunshot():
     sound = pygame.mixer.Sound("lmg_fire01.mp3")
     sound.play()
@@ -181,6 +186,7 @@ class Zombie(simpleGE.SuperSprite):
             if self.collidesWith(bullet):
                 bullet.reset()
                 self.hide()
+                splat()
                 self.scene.enemiesLeft -= 1 
                 self.scene.zombiesKilled.zombies_killed += 1
                 break
