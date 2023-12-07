@@ -2,6 +2,17 @@ import pygame, simpleGE, random, sys
 
 pygame.init()
 
+def play_gunshot():
+    pygame.mixer.init()
+    sound = pygame.mixer.Sound("lmg_fire01.mp3")
+    sound.play()
+    
+def backroundMusic():
+    pygame.mixer.init()
+    sound = pygame.mixer.Sound("Szymon Matuszewski - Hospital.mp3")
+    sound.play()
+    sound.play(loops=-1)
+    
 class LblZombie_Kill(simpleGE.Label):
     def __init__(self, scene):
         super().__init__()
@@ -158,7 +169,8 @@ class Game(simpleGE.Scene):
            
         self.bullets_group = pygame.sprite.Group(self.bullets)
        
-
+        backroundMusic()
+        
         self.sprites = [self.player, self.startScreen, self.bullets,
                         self.waves_label, self.zombies, self.zombiesKilled]
        
@@ -184,6 +196,7 @@ class Game(simpleGE.Scene):
             if self.currentBullet >= self.NUM_BULLETS:
                 self.currentBullet = 0
             self.bullets[self.currentBullet].fire()
+            play_gunshot()
 
     def resetGame(self):
         self.startScreen.hide()
